@@ -1011,6 +1011,12 @@ async function uploadCSVFile() {
             renderAnomaliesCenter();
             renderReportDocuments();
             
+            const now = new Date();
+            const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+            const syncTimeSpan = document.getElementById('csv-last-sync-time');
+            if (syncTimeSpan) {
+                syncTimeSpan.textContent = `Last Ingestion: ${dateStr} (${file.name})`;
+            }
             logTelemetry(`DB: Manually ingested CSV file "${file.name}" into target table "${target.toUpperCase()}".`);
             appendSystemMessage(`📤 **Manual Ingestion Successful**: Ingested new records into the **${target.toUpperCase()}** database. Recalculated BI metrics.`);
         } else {
@@ -1620,6 +1626,12 @@ async function publishPubSubMockEvent() {
         
         if (res.ok) {
             const data = await res.json();
+            const now = new Date();
+            const dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+            const pubsubSyncTimeSpan = document.getElementById('pubsub-last-sync-time');
+            if (pubsubSyncTimeSpan) {
+                pubsubSyncTimeSpan.textContent = `Last Ingress: ${dateStr} (${target.toUpperCase()})`;
+            }
             logTelemetry(`PUBSUB: Message processed successfully! target database loaded.`);
             appendSystemMessage(`🔔 **GCP Pub/Sub Ingress Triggered**: Decoded base64 payload. Ingested data into **${target.toUpperCase()}**.`);
             

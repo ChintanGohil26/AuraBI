@@ -401,6 +401,7 @@
                                 <span id="csv-file-name" style="color: var(--text-secondary); font-size: 13px;">No file chosen</span>
                                 <button class="btn btn-primary" id="btn-upload-csv" style="padding: 8px 16px;">Ingest CSV</button>
                             </div>
+                            <div style="font-size: 11px; color: var(--color-accent); font-weight: 600; margin-top: 4px;" id="csv-last-sync-time">Last Ingestion: None</div>
                         </div>
 
                         <!-- GCP Pub/Sub Event Simulator Card -->
@@ -428,6 +429,7 @@
                                 </div>
                                 <textarea id="pubsub-csv-payload" class="correction-input" rows="3" style="width: 100%; font-family: monospace; font-size: 11px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px;" placeholder="id,date,client,product,amount,region,sales_agent,status&#10;CRM-100,2026-07-06,Google Cloud,PubSub Engine Node,75000,North America,Sarah Connor,Closed Won"></textarea>
                             </div>
+                            <div style="font-size: 11px; color: var(--color-accent); font-weight: 600; margin-top: 4px;" id="pubsub-last-sync-time">Last Ingress: None</div>
                         </div>
 
                         <!-- CRM Table -->
