@@ -38,6 +38,23 @@ app.add_middleware(
 # 2. Initialize FastMCP Server
 mcp = FastMCP("AuraBI-Data-Connector")
 
+# Helper functions for safe CSV type conversions
+def safe_float(val, default=0.0):
+    if val is None or str(val).strip() == "":
+        return default
+    try:
+        return float(val)
+    except ValueError:
+        return default
+
+def safe_int(val, default=0):
+    if val is None or str(val).strip() == "":
+        return default
+    try:
+        return int(val)
+    except ValueError:
+        return default
+
 # Define MCP Tools (Exposed over /mcp/sse)
 
 @mcp.tool()
@@ -196,7 +213,7 @@ async def pubsub_push_trigger(envelope: PubSubEnvelope, role: str = Query("Admin
             
         # Decode base64 payload
         decoded_bytes = base64.b64decode(msg["data"])
-        decoded_str = decoded_bytes.decode("utf-8")
+        decoded_str = decoded_bytes.decode("utf-8-sig")
         
         # Determine target from attributes or default to crm
         attributes = msg.get("attributes", {}) or {}
@@ -215,20 +232,15 @@ async def pubsub_push_trigger(envelope: PubSubEnvelope, role: str = Query("Admin
         count = 0
         for row in reader:
             if target == "crm":
-                if "amount" in row:
-                    row["amount"] = float(row["amount"])
+                row["amount"] = safe_float(row.get("amount"), 0.0)
                 db.crm.append(row)
             elif target == "erp":
-                if "amount" in row:
-                    row["amount"] = float(row["amount"])
+                row["amount"] = safe_float(row.get("amount"), 0.0)
                 db.erp.append(row)
             elif target == "production":
-                if "units_produced" in row:
-                    row["units_produced"] = int(row["units_produced"])
-                if "defects" in row:
-                    row["defects"] = int(row["defects"])
-                if "efficiency_pct" in row:
-                    row["efficiency_pct"] = float(row["efficiency_pct"])
+                row["units_produced"] = safe_int(row.get("units_produced"), 0)
+                row["defects"] = safe_int(row.get("defects"), 0)
+                row["efficiency_pct"] = safe_float(row.get("efficiency_pct"), 0.0)
                 db.production.append(row)
             count += 1
             
@@ -419,7 +431,7 @@ async def upload_csv_data(
     verify_role_permission(role, ["Admin"])
     
     contents = await file.read()
-    decoded = contents.decode("utf-8")
+    decoded = contents.decode("utf-8-sig")
     
     import csv
     import io
@@ -435,15 +447,6 @@ async def upload_csv_data(
                     continue
                 key = k.strip()
                 val = v.strip() if v else ""
-                
-                # Type conversions
-                try:
-                    if "." in val:
-                        val = float(val)
-                    else:
-                        val = int(val)
-                except ValueError:
-                    pass
                 record[key] = val
             records.append(record)
             
@@ -454,23 +457,23 @@ async def upload_csv_data(
             for r in records:
                 if not r.get("id"):
                     r["id"] = f"CRM-CSV-{uuid.uuid4().hex[:6].upper()}"
-                r["amount"] = float(r.get("amount", 0.0))
+                r["amount"] = safe_float(r.get("amount"), 0.0)
                 r["status"] = r.get("status", "Closed Won")
                 db.crm.append(r)
         elif target == "erp":
             for r in records:
                 if not r.get("id"):
                     r["id"] = f"ERP-CSV-{uuid.uuid4().hex[:6].upper()}"
-                r["amount"] = float(r.get("amount", 0.0))
+                r["amount"] = safe_float(r.get("amount"), 0.0)
                 r["type"] = r.get("type", "Debit")
                 db.erp.append(r)
         elif target == "production":
             for r in records:
                 if not r.get("id"):
                     r["id"] = f"PRD-CSV-{uuid.uuid4().hex[:6].upper()}"
-                r["units_produced"] = int(r.get("units_produced", 0))
-                r["defects"] = int(r.get("defects", 0))
-                r["efficiency_pct"] = float(r.get("efficiency_pct", 0.0))
+                r["units_produced"] = safe_int(r.get("units_produced"), 0)
+                r["defects"] = safe_int(r.get("defects"), 0)
+                r["efficiency_pct"] = safe_float(r.get("efficiency_pct"), 0.0)
                 db.production.append(r)
         else:
              raise HTTPException(status_code=400, detail="Invalid target dataset.")
