@@ -1,0 +1,4 @@
+id,date,client,product,amount,region,sales_agent,status
+CRM-101,2026-06-25,Google Cloud,PubSub Engine Node,75000.0,North America,Sarah Connor,Closed Won
+CRM-102,2026-06-28,Solaris Grid,Energy Matrix Base,98000.0,Europe,John Connor,Closed Won
+CRM-103,2026-07-02,Vega Logistics,Logistics Hub Pro,125000.0,Asia Pacific,Ellen Ripley,Closed Won

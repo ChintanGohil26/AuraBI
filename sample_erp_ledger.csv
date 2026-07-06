@@ -1,0 +1,5 @@
+id,date,account,amount,type,reference
+ERP-101,2026-06-25,Cash,75000.0,Debit,REF-PUB-101
+ERP-102,2026-06-25,Sales Revenue,75000.0,Credit,REF-PUB-101
+ERP-103,2026-07-02,Accounts Receivable,98000.0,Debit,REF-PUB-102
+ERP-104,2026-07-02,Sales Revenue,98000.0,Credit,REF-PUB-102
