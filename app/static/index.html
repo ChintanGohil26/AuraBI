@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraBI - AI-Augmented Business Intelligence</title>
+    
+    <!-- Modern Google Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- ChartJS for premium visuals -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom Premium Stylesheets -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="dark-theme">
+    <!-- Login Startup Portal -->
+    <div class="login-portal" id="login-portal-screen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 1000; overflow-y: auto; flex-direction: column; gap: 24px;">
+        <!-- Card 1: Auth form -->
+        <div class="login-card" id="login-auth-card" style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 40px; width: 420px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7); backdrop-filter: blur(20px);">
+            <div class="login-header" style="margin-bottom: 24px;">
+                <div class="logo-icon" style="margin: 0 auto 16px auto; width: 48px; height: 48px;"></div>
+                <h2 style="font-family: var(--font-heading); font-size: 24px; font-weight: 700;">Aura<span>BI</span> Portal</h2>
+                <p style="color: var(--text-secondary); font-size: 13px; margin-top: 4px;">Sign in to access corporate data hubs</p>
+            </div>
+            <div class="login-body" style="text-align: left;">
+                <div class="input-group" style="margin-bottom: 16px;">
+                    <label for="login-email" style="display: block; margin-bottom: 6px; color: var(--text-secondary); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Corporate Email</label>
+                    <input type="email" id="login-email" class="correction-input" placeholder="e.g. admin@solaris.com" style="width: 100%; padding: 12px 14px; background-color: rgba(0,0,0,0.2); border-radius: 8px;">
+                </div>
+                <div class="input-group" style="margin-bottom: 24px;">
+                    <label for="login-password" style="display: block; margin-bottom: 6px; color: var(--text-secondary); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Password</label>
+                    <input type="password" id="login-password" class="correction-input" placeholder="••••••••" style="width: 100%; padding: 12px 14px; background-color: rgba(0,0,0,0.2); border-radius: 8px;">
+                </div>
+                <button class="btn btn-primary" id="btn-login-submit" style="width: 100%; justify-content: center; padding: 12px; font-size: 15px; border-radius: 8px;">Sign In</button>
+                <div id="login-error" class="text-danger text-center" style="margin-top: 12px; font-size: 12px; display: none; font-weight: 600;">⚠️ Invalid credentials. Please try again.</div>
+            </div>
+            <div class="login-footer" style="margin-top: 32px; border-top: 1px solid var(--border-color); padding-top: 16px; font-size: 11px; color: var(--text-muted); text-align: left; line-height: 1.6;">
+                <p style="font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin-bottom: 8px;">Demo Evaluation Credentials:</p>
+                <p>🔑 <strong>Admin:</strong> <code>admin@solaris.com</code> / <code>admin123</code></p>
+                <p>🔑 <strong>Super User:</strong> <code>super@solaris.com</code> / <code>super123</code></p>
+                <p>🔑 <strong>Viewer:</strong> <code>viewer@solaris.com</code> / <code>viewer123</code></p>
+            </div>
+        </div>
+
+        <!-- Card 2: Workspace selector Choice overlay (shown for Admin/Super User) -->
+        <div class="login-card" id="portal-choice-card" style="background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 40px; width: 560px; text-align: center; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7); backdrop-filter: blur(20px); display: none;">
+            <div class="login-header" style="margin-bottom: 24px;">
+                <div class="logo-icon" style="margin: 0 auto 16px auto; width: 48px; height: 48px;"></div>
+                <h2 style="font-family: var(--font-heading); font-size: 24px; font-weight: 700;">Aura<span>BI</span> Workspace selection</h2>
+                <p style="color: var(--text-secondary); font-size: 13px; margin-top: 4px;">Choose your active hub context below</p>
+            </div>
+            <div style="display: flex; gap: 20px; text-align: left; margin-bottom: 8px;">
+                <!-- Choice: ETL / developer hub -->
+                <div class="choice-box" id="choice-etl-hub" style="flex: 1; border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; background: rgba(0,240,255,0.02); cursor: pointer; transition: all 0.2s ease; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; min-height: 200px;">
+                    <div style="font-size: 40px;">🛠️</div>
+                    <h3 style="font-family: var(--font-heading); font-size: 15px; font-weight: 700; color: var(--color-accent);">Data Ingestion & Modeling</h3>
+                    <p style="color: var(--text-secondary); font-size: 11px; line-height: 1.5;">Ingest raw tables, name database connections, run DAX data manipulations, and publish calculated measures.</p>
+                </div>
+                <!-- Choice: Analytics Hub -->
+                <div class="choice-box" id="choice-report-hub" style="flex: 1; border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; background: rgba(138,43,226,0.02); cursor: pointer; transition: all 0.2s ease; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; min-height: 200px;">
+                    <div style="font-size: 40px;">📊</div>
+                    <h3 style="font-family: var(--font-heading); font-size: 15px; font-weight: 700; color: var(--color-primary);">Reporting & Analytics</h3>
+                    <p style="color: var(--text-secondary); font-size: 11px; line-height: 1.5;">Access pre-rendered executive dashboards, view Chart.js metrics, and inspect trial balance ledgers.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container" id="aurabi-app-container" style="display: none;">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo-icon"></div>
+                <h2>Aura<span>BI</span></h2>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-btn active" id="btn-tab-dashboard" data-tab="tab-dashboard">
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" fill="currentColor"/></svg>
+                    Dashboard
+                </button>
+                <button class="nav-btn" id="btn-tab-etl" data-tab="tab-etl">
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" fill="currentColor"/></svg>
+                    Data Sources (ETL)
+                </button>
+                <button class="nav-btn" id="btn-tab-qa" data-tab="tab-qa">
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="currentColor"/></svg>
+                    Anomalies & QA
+                    <span class="badge badge-alert" id="anomaly-badge-count" style="display:none;">0</span>
+                </button>
+                <button class="nav-btn" id="btn-tab-reports" data-tab="tab-reports">
+                    <svg viewBox="0 0 24 24" width="20" height="20"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14H7v-7h3v7zm4 0h-3V7h3v10zm4 0h-3v-4h3v4z" fill="currentColor"/></svg>
+                    Standard Reports
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="company-tag">
+                    <p class="label">Organization</p>
+                    <p class="name">Solaris Nexus Inc.</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header bar with controls -->
+            <header class="app-header">
+                <div class="header-left">
+                    <h1 id="page-title">Operational Dashboard</h1>
+                    <p class="subtitle" id="page-subtitle">Real-time enterprise intelligence & insights</p>
+                </div>
+                <div class="header-right">
+                    <!-- Dynamic User Profile Header -->
+                    <div class="user-profile-header" id="header-user-profile" style="display: flex; align-items: center; gap: 12px; border-right: 1px solid var(--border-color); padding-right: 20px; margin-right: 8px;">
+                        <div class="user-avatar" id="header-user-avatar" style="width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-family: var(--font-heading); font-size: 15px; box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);">U</div>
+                        <div style="text-align: left;">
+                            <p style="font-size: 13px; font-weight: 600;" id="header-user-name">User Name</p>
+                            <p style="font-size: 11px; color: var(--text-secondary);" id="header-user-role">Viewer Role</p>
+                        </div>
+                    </div>
+                    
+                    <button class="btn" id="btn-logout" style="background-color: rgba(239, 68, 68, 0.1); color: var(--color-danger); border: 1px solid rgba(239, 68, 68, 0.2); padding: 7px 14px; font-size: 12px; border-radius: 8px; font-weight: 600; margin-right: 12px;">
+                        Log Out
+                    </button>
+                    
+                    <!-- Sync ETL Button -->
+                    <button class="btn btn-primary" id="btn-sync-etl">
+                        <svg viewBox="0 0 24 24" width="16" height="16" id="sync-icon"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm-6 8c0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6z" fill="currentColor"/></svg>
+                        <span>Sync ETL</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- TABS CONTAINER -->
+            <div class="tab-content-container">
+                
+                <!-- 1. DASHBOARD TAB -->
+                <section class="tab-pane active" id="tab-dashboard">
+                    <!-- Mini Cards Grid -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-info">
+                                <span class="kpi-title">CRM Sales Revenue</span>
+                                <h3 class="kpi-value" id="kpi-sales-revenue">$0.00</h3>
+                                <span class="kpi-meta text-success" id="kpi-sales-deals">0 Deals Closed</span>
+                            </div>
+                            <div class="kpi-icon icon-revenue">💰</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-info">
+                                <span class="kpi-title">ERP Ledger Integrity</span>
+                                <h3 class="kpi-value" id="kpi-ledger-status">Checking...</h3>
+                                <span class="kpi-meta" id="kpi-ledger-diff">Debits match Credits</span>
+                            </div>
+                            <div class="kpi-icon icon-ledger">⚖️</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-info">
+                                <span class="kpi-title">Assembly Defect Rate</span>
+                                <h3 class="kpi-value" id="kpi-defect-rate">0.00%</h3>
+                                <span class="kpi-meta text-warning" id="kpi-prod-yield">0 Units Produced</span>
+                            </div>
+                            <div class="kpi-icon icon-production">🏭</div>
+                        </div>
+                    </div>
+
+                    <!-- Published Custom Database Measures Grid -->
+                    <div id="custom-measures-dashboard-section" style="display: none; margin-bottom: 32px;">
+                        <h4 style="font-family: var(--font-heading); font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Published Corporate Measures (Database Columns)</h4>
+                        <div class="kpi-grid" id="custom-measures-grid" style="margin-bottom: 24px;">
+                            <!-- Dynamically Published KPI Cards will appear here -->
+                        </div>
+                    </div>
+
+                    <!-- Charts Grid -->
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3>Revenue by Product Line</h3>
+                            </div>
+                            <div class="chart-body">
+                                <canvas id="chart-product-revenue"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3>Regional Sales Performance</h3>
+                            </div>
+                            <div class="chart-body">
+                                <canvas id="chart-regional-revenue"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. DATA SOURCES (ETL) TAB -->
+                <section class="tab-pane" id="tab-etl">
+                    <!-- Restriction Banner -->
+                    <div class="role-restriction-overlay" id="etl-lock-overlay">
+                        <div class="lock-card">
+                            <div class="lock-icon">🔒</div>
+                            <h3>Access Restricted</h3>
+                            <p>The <strong>Viewer</strong> role is prohibited from inspecting raw database schemas. Change your security role in the header to gain access.</p>
+                        </div>
+                    </div>
+
+                    <div class="etl-layout">
+                        <!-- ETL Header Summary -->
+                        <div class="etl-intro" style="margin-bottom: 24px;">
+                            <h3>Operational ETL Hub & Data Modeling</h3>
+                            <p>Connect database channels, establish external API data feeds, transform transactional rows, and publish measures to the reporting database.</p>
+                        </div>
+
+                        <!-- External Database Connectors Manager -->
+                        <div class="table-card" style="padding: 24px; margin-bottom: 24px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.01);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <h4 style="font-family: var(--font-heading); font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" style="color: var(--color-success);"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" fill="currentColor"/></svg>
+                                    External Connections Manager
+                                </h4>
+                                <span class="badge" style="background-color: rgba(16, 185, 129, 0.1); color: var(--color-success); border: 1px solid rgba(16, 185, 129, 0.2);">Data Pipelines</span>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 13px;">Configure and name connection links to pull data feeds from external CRMs or ERP transactional servers.</p>
+                            
+                            <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; margin-bottom: 16px;">
+                                <div style="display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 150px;">
+                                    <label style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">Connection Name</label>
+                                    <input type="text" id="conn-name-input" class="correction-input" placeholder="e.g. Netsuite ERP" style="width: 100%; padding: 8px 12px; background-color: rgba(0,0,0,0.2); border-radius: 8px;">
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 4px; flex: 1.5; min-width: 180px;">
+                                    <label style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">API Endpoint URL</label>
+                                    <input type="text" id="conn-url-input" class="correction-input" placeholder="e.g. https://api.netsuite.com/v1" style="width: 100%; padding: 8px 12px; background-color: rgba(0,0,0,0.2); border-radius: 8px;">
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 4px; min-width: 120px;">
+                                    <label style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">Table Destination</label>
+                                    <select id="conn-dest-select" class="role-select" style="padding: 8px 12px; border-radius: 8px;">
+                                        <option value="crm">CRM Sales</option>
+                                        <option value="erp">ERP Ledger</option>
+                                        <option value="production">Production IoT</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 4px; min-width: 120px;">
+                                    <label style="font-size: 11px; color: var(--text-secondary);">&nbsp;</label>
+                                    <button class="btn btn-primary" id="btn-establish-connection" style="padding: 10px 16px; font-size: 12px; border-radius: 8px; font-weight: 600;">Connect Ingest</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Connected Pipelines list -->
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;" id="connected-pipelines-list">
+                                <span class="badge" style="background: rgba(255,255,255,0.03); padding: 6px 12px; border: 1px solid var(--border-color); color: var(--text-primary);">🟢 ERP General Ledger (Cached DB)</span>
+                                <span class="badge" style="background: rgba(255,255,255,0.03); padding: 6px 12px; border: 1px solid var(--border-color); color: var(--text-primary);">🟢 CRM Pipeline Deals (Cached DB)</span>
+                                <span class="badge" style="background: rgba(255,255,255,0.03); padding: 6px 12px; border: 1px solid var(--border-color); color: var(--text-primary);">🟢 Assembly IoT Output (Cached DB)</span>
+                            </div>
+                        </div>
+
+                        <!-- Calculated Measures & Modeling Transformations -->
+                        <div class="table-card" style="padding: 24px; margin-bottom: 24px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.01);">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <h4 style="font-family: var(--font-heading); font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" style="color: var(--color-accent);"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" fill="currentColor"/></svg>
+                                    Calculated Measures & Modeling Engine
+                                </h4>
+                                <span class="badge" style="background-color: rgba(0, 240, 255, 0.1); color: var(--color-accent); border: 1px solid rgba(0,240,255,0.2);">Data Transformations</span>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 13px;">Write and execute custom DAX-like queries to manipulate raw datasets. Pushing a calculated column/measure publishes it directly to the end-user report dashboards.</p>
+                            
+                            <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label for="dax-preset-select" style="font-size: 12px; color: var(--text-secondary); white-space: nowrap;">Presets:</label>
+                                    <select id="dax-preset-select" class="role-select" style="max-width: 200px;">
+                                        <option value="">-- Choose Preset --</option>
+                                        <option value="SUM(CRM[amount])">Total Gross Sales = SUM(CRM[amount])</option>
+                                        <option value="AVERAGE(CRM[amount])">Average Sales Valuation = AVERAGE(CRM[amount])</option>
+                                        <option value="SUM(Production[defects]) / SUM(Production[units_produced]) * 100">Overall Factory Defect Rate = SUM(Production[defects]) / SUM(Production[units_produced]) * 100</option>
+                                        <option value="SUM(ERP[amount]) WHERE type = 'Debit'">Total Ledger Debits = SUM(ERP[amount]) WHERE type = 'Debit'</option>
+                                    </select>
+                                </div>
+                                <input type="text" id="dax-custom-input" class="correction-input" placeholder="e.g. SUM(CRM[amount]) WHERE region = 'North America'" style="flex-grow: 1; padding: 10px 14px; background-color: rgba(0,0,0,0.2); border-radius: 8px; min-width: 200px;">
+                                <button class="btn btn-primary" id="btn-run-dax" style="padding: 10px 16px; font-size: 12px; border-radius: 8px;">Compute Measure</button>
+                                <button class="btn btn-success" id="btn-publish-dax" style="padding: 10px 16px; font-size: 12px; border-radius: 8px; font-weight: 600; display: none;">Publish to Database</button>
+                            </div>
+                            <div id="dax-result-card" style="margin-top: 16px; padding: 16px; background-color: rgba(0,240,255,0.03); border: 1px solid rgba(0,240,255,0.15); border-radius: 8px; display: none;">
+                                <p style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px;">Calculated Metric Value</p>
+                                <h3 id="dax-result-value" style="font-family: var(--font-heading); font-size: 26px; color: var(--color-accent); margin-top: 4px; font-weight: 700;">$0.00</h3>
+                            </div>
+                        </div>
+
+                        <!-- Ingestion Settings & Administration Console -->
+                        <div class="table-card" style="padding: 24px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.01); margin-bottom: 24px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <h4 style="font-family: var(--font-heading); font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" style="color: var(--color-warning);"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" fill="currentColor"/></svg>
+                                    Ingestion Settings & Admin Tasks
+                                </h4>
+                                <span class="badge" style="background-color: rgba(245, 158, 11, 0.1); color: var(--color-warning); border: 1px solid rgba(245, 158, 11, 0.2);">Admin Menu</span>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 13px;">Manage global security levels, clear local caches, sync datasets, and track live telemetry logs.</p>
+                            
+                            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px;">
+                                <div style="display: flex; flex-direction: column; gap: 6px; min-width: 200px; flex: 1;">
+                                    <label style="font-size: 11px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Global Security Mode</label>
+                                    <select id="admin-security-level" class="role-select" style="padding: 10px 14px; border-radius: 8px;">
+                                        <option value="strict">Strict Role Isolation (Enforce RBAC)</option>
+                                        <option value="relaxed">Relaxed Sandbox (Allow All Actions)</option>
+                                    </select>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 6px; min-width: 200px; flex: 1;">
+                                    <label style="font-size: 11px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Database Tasks</label>
+                                    <div style="display: flex; gap: 10px;">
+                                        <button class="btn btn-primary" id="btn-admin-sync" style="flex: 1; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: 600;">Full Sync (Reset DB)</button>
+                                        <button class="btn" id="btn-admin-purge-measures" style="flex: 1; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: 600; background-color: rgba(239, 68, 68, 0.1); color: var(--color-danger); border: 1px solid rgba(239, 68, 68, 0.2);">Clear Custom KPI</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 16px;">
+                                <label style="font-size: 11px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 8px;">Workspace Telemetry & Audit Logs</label>
+                                <div id="admin-telemetry-log" style="font-family: monospace; font-size: 11px; height: 110px; overflow-y: auto; background-color: rgba(0,0,0,0.4); border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; color: #39ff14; line-height: 1.6; text-align: left;">
+                                    <div style="color: var(--text-muted);">[2026-07-06 17:00:00] SYSTEM: Initializing AuraBI Admin Auditing...</div>
+                                    <div style="color: var(--text-muted);">[2026-07-06 17:00:01] SYSTEM: Solar Nexus Ingestion databases active.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- BI Release Workflow Lifecycle Card -->
+                        <div class="table-card" style="padding: 24px; border: 1px solid var(--border-color); background: rgba(255,255,255,0.01); margin-bottom: 24px;" id="report-workflow-card">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <h4 style="font-family: var(--font-heading); font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" style="color: var(--color-accent);"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" fill="currentColor"/></svg>
+                                    Report Release Approval Lifecycle
+                                </h4>
+                                <span class="badge" id="workflow-badge-status" style="background-color: rgba(0, 240, 255, 0.1); color: var(--color-accent); border: 1px solid rgba(0,240,255,0.2);">Draft Mode</span>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 13px;">Follow the corporate deployment process: BI Specialist Drafts ➔ SME Audits ➔ Team Receives Email Link ➔ Publish to Corporate User Group.</p>
+                            
+                            <!-- Visual Progress Pipeline -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 10px; flex-wrap: wrap; gap: 12px;">
+                                <div class="step-indicator" id="wf-step-1" style="text-align: center; flex: 1; min-width: 80px; padding: 8px; border-radius: 8px; border: 1px solid var(--border-color); background: rgba(0,240,255,0.02); color: var(--color-accent);">
+                                    <div style="font-size: 14px;">🛠️</div>
+                                    <div style="font-size: 10px; font-weight: 600; margin-top: 4px;">1. Draft</div>
+                                </div>
+                                <div style="color: var(--text-muted); font-size: 16px;">➔</div>
+                                <div class="step-indicator" id="wf-step-2" style="text-align: center; flex: 1; min-width: 80px; padding: 8px; border-radius: 8px; border: 1px solid transparent; background: rgba(255,255,255,0.01); opacity: 0.5;">
+                                    <div style="font-size: 14px;">🔍</div>
+                                    <div style="font-size: 10px; font-weight: 600; margin-top: 4px; color: var(--text-secondary);">2. SME Audit</div>
+                                </div>
+                                <div style="color: var(--text-muted); font-size: 16px;">➔</div>
+                                <div class="step-indicator" id="wf-step-3" style="text-align: center; flex: 1; min-width: 80px; padding: 8px; border-radius: 8px; border: 1px solid transparent; background: rgba(255,255,255,0.01); opacity: 0.5;">
+                                    <div style="font-size: 14px;">✉️</div>
+                                    <div style="font-size: 10px; font-weight: 600; margin-top: 4px; color: var(--text-secondary);">3. Team Link</div>
+                                </div>
+                                <div style="color: var(--text-muted); font-size: 16px;">➔</div>
+                                <div class="step-indicator" id="wf-step-4" style="text-align: center; flex: 1; min-width: 80px; padding: 8px; border-radius: 8px; border: 1px solid transparent; background: rgba(255,255,255,0.01); opacity: 0.5;">
+                                    <div style="font-size: 14px;">🚀</div>
+                                    <div style="font-size: 10px; font-weight: 600; margin-top: 4px; color: var(--text-secondary);">4. Published</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Current Action Context -->
+                            <div style="background-color: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+                                <div style="text-align: left;">
+                                    <p style="font-size: 10px; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px;">Current Assignment</p>
+                                    <h4 id="wf-assigned-person" style="font-family: var(--font-heading); font-size: 14px; color: var(--text-primary); margin-top: 2px; font-weight: 700;">BI Specialist (Admin)</h4>
+                                </div>
+                                <div style="display: flex; gap: 10px;" id="wf-action-container">
+                                    <button class="btn btn-primary" id="btn-wf-advance" style="padding: 10px 16px; font-size: 12px; border-radius: 8px; font-weight: 600;">Submit for SME Review</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Workflow History Tracker -->
+                            <div style="margin-top: 16px; text-align: left;">
+                                <details style="cursor: pointer;">
+                                    <summary style="font-size: 11px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; outline: none; margin-bottom: 4px;">Approval Audit Trail (Expand)</summary>
+                                    <ul id="wf-history-list" style="font-size: 11px; color: var(--text-secondary); padding-left: 20px; line-height: 1.8; margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+                                        <li>[Draft Phase]: Draft initialized by BI Specialist.</li>
+                                    </ul>
+                                </details>
+                            </div>
+                        </div>
+
+                        <!-- Manual Ingestion Card -->
+                        <div class="table-card" id="csv-upload-card" style="padding: 24px; display: flex; flex-direction: column; gap: 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); margin-bottom: 8px;">
+                            <h4 style="font-family: var(--font-heading); font-size: 16px; font-weight: 600;">Manual CSV File Ingestion</h4>
+                            <p style="color: var(--text-secondary); margin-bottom: 8px;">Upload a CSV file containing records to append to Solaris Nexus Inc.'s databases. Select the target database first.</p>
+                            <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <label for="upload-target-select" style="font-size: 12px; color: var(--text-secondary);">Target Table:</label>
+                                    <select id="upload-target-select" class="role-select">
+                                        <option value="crm">CRM Sales Deals</option>
+                                        <option value="erp">ERP General Ledger</option>
+                                        <option value="production">Factory IoT Production</option>
+                                    </select>
+                                </div>
+                                <input type="file" id="csv-file-input" accept=".csv" style="display: none;">
+                                <button class="btn" style="background-color: rgba(255,255,255,0.05); color: var(--text-primary); border: 1px solid var(--border-color);" onclick="document.getElementById('csv-file-input').click()">Choose CSV</button>
+                                <span id="csv-file-name" style="color: var(--text-secondary); font-size: 13px;">No file chosen</span>
+                                <button class="btn btn-primary" id="btn-upload-csv" style="padding: 8px 16px;">Ingest CSV</button>
+                            </div>
+                        </div>
+
+                        <!-- GCP Pub/Sub Event Simulator Card -->
+                        <div class="table-card" id="pubsub-sim-card" style="padding: 24px; display: flex; flex-direction: column; gap: 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); margin-bottom: 24px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                <h4 style="font-family: var(--font-heading); font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" style="color: var(--color-accent);"><path d="M19 12h-2v3h-3v2h5v-5zM7 10h2V7h3V5H7v5zm12-5H5c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 12H5V7h14v10z" fill="currentColor"/></svg>
+                                    GCP Pub/Sub Event Simulator (Day 1 Integration)
+                                </h4>
+                                <span class="badge" style="background-color: rgba(0, 240, 255, 0.1); color: var(--color-accent); border: 1px solid rgba(0,240,255,0.2);">Cloud Ingress</span>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: 8px; font-size: 13px;">Simulates Google Cloud Storage file uploads invoking a GCP Pub/Sub push notification trigger. Ingests base64 encoded data payloads directly.</p>
+                            
+                            <div style="display: flex; gap: 16px; flex-direction: column; text-align: left;">
+                                <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <label for="pubsub-target-select" style="font-size: 12px; color: var(--text-secondary);">Target Table:</label>
+                                        <select id="pubsub-target-select" class="role-select">
+                                            <option value="crm">CRM Sales Deals</option>
+                                            <option value="erp">ERP General Ledger</option>
+                                            <option value="production">Factory IoT Production</option>
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-primary" id="btn-publish-pubsub" style="padding: 8px 16px; font-size: 12px; font-weight: 600;">Publish Event Envelope</button>
+                                </div>
+                                <textarea id="pubsub-csv-payload" class="correction-input" rows="3" style="width: 100%; font-family: monospace; font-size: 11px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px;" placeholder="id,date,client,product,amount,region,sales_agent,status&#10;CRM-100,2026-07-06,Google Cloud,PubSub Engine Node,75000,North America,Sarah Connor,Closed Won"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- CRM Table -->
+                        <div class="table-card">
+                            <div class="table-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <h4>Ingested CRM Pipeline Deals (Sales Ledger)</h4>
+                                <button class="btn btn-sm" style="background-color: rgba(255,255,255,0.03); border: 1px solid var(--border-color); font-size: 11px; padding: 4px 10px; color: var(--color-accent); font-weight: 600;" onclick="downloadTableAsCSV('table-crm-data', 'solaris_crm_raw.csv')">
+                                    📥 Download CSV
+                                </button>
+                            </div>
+                            <div class="table-wrapper">
+                                <table class="data-table" id="table-crm-data">
+                                    <thead>
+                                        <tr>
+                                            <th>Deal ID</th>
+                                            <th>Date</th>
+                                            <th>Client Name</th>
+                                            <th>Product Package</th>
+                                            <th>Deal Amount</th>
+                                            <th>Region</th>
+                                            <th>Sales Rep</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Dynamic Row Insertion -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- ERP Table -->
+                        <div class="table-card">
+                            <div class="table-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <h4>General Ledger Records (ERP Accounts)</h4>
+                                <button class="btn btn-sm" style="background-color: rgba(255,255,255,0.03); border: 1px solid var(--border-color); font-size: 11px; padding: 4px 10px; color: var(--color-accent); font-weight: 600;" onclick="downloadTableAsCSV('table-erp-data', 'solaris_erp_raw.csv')">
+                                    📥 Download CSV
+                                </button>
+                            </div>
+                            <div class="table-wrapper">
+                                <table class="data-table" id="table-erp-data">
+                                    <thead>
+                                        <tr>
+                                            <th>GL Entry ID</th>
+                                            <th>Date</th>
+                                            <th>Account Name</th>
+                                            <th>Type</th>
+                                            <th>Amount</th>
+                                            <th>Authorized By</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Dynamic Row Insertion -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Production Table -->
+                        <div class="table-card">
+                            <div class="table-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <h4>Assembly line Output (Factory Floor IoT)</h4>
+                                <button class="btn btn-sm" style="background-color: rgba(255,255,255,0.03); border: 1px solid var(--border-color); font-size: 11px; padding: 4px 10px; color: var(--color-accent); font-weight: 600;" onclick="downloadTableAsCSV('table-prod-data', 'solaris_production_raw.csv')">
+                                    📥 Download CSV
+                                </button>
+                            </div>
+                            <div class="table-wrapper">
+                                <table class="data-table" id="table-prod-data">
+                                    <thead>
+                                        <tr>
+                                            <th>Batch ID</th>
+                                            <th>Date</th>
+                                            <th>Machine ID</th>
+                                            <th>Units Produced</th>
+                                            <th>Defects Flagged</th>
+                                            <th>Efficiency %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Dynamic Row Insertion -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. ANOMALIES & QA TAB -->
+                <section class="tab-pane" id="tab-qa">
+                    <!-- Restriction Banner -->
+                    <div class="role-restriction-overlay" id="qa-lock-overlay">
+                        <div class="lock-card">
+                            <div class="lock-icon">🔒</div>
+                            <h3>Access Restricted</h3>
+                            <p>The <strong>Viewer</strong> role is prohibited from view and editing data anomalies. Change your security role in the header to gain access.</p>
+                        </div>
+                    </div>
+
+                    <div class="qa-layout">
+                        <div class="qa-intro">
+                            <h3>Data Integrity & QA Center</h3>
+                            <p>Automated validation checks highlight rows violating business constraints. Admins can correct values inline to trigger real-time metrics recalculation.</p>
+                            <div id="qa-role-notice" class="alert-banner alert-warning">
+                                ⚠️ <strong>Auditor Status</strong>: You are signed in as a <strong>Super User</strong>. You can view all anomalies but you do not have permission to correct raw records. Change to <strong>Admin</strong> to modify values.
+                            </div>
+                        </div>
+
+                        <!-- Anomalies Summary List -->
+                        <div class="anomalies-container">
+                            <div class="anomalies-list-header">
+                                <h4>Active Flagged Integrity Faults</h4>
+                                <span class="anom-count-badge" id="anom-count-badge">0 Issues Active</span>
+                            </div>
+                            <div class="anomalies-list" id="anomalies-list-container">
+                                <!-- Dynamic Card Insertions -->
+                            </div>
+                        </div>
+
+                        <!-- Inline Data Quality Correction Grid (Admin Only) -->
+                        <div class="table-card" id="qa-correction-card">
+                            <div class="table-header">
+                                <h4>Inline Data Correction Console</h4>
+                            </div>
+                            <div class="table-wrapper">
+                                <table class="data-table correction-table" id="table-correction-data">
+                                    <thead>
+                                        <tr>
+                                            <th>Source</th>
+                                            <th>Record ID</th>
+                                            <th>Faulty Field</th>
+                                            <th>Anomalous Value</th>
+                                            <th>Error Reason</th>
+                                            <th>Status / Correct Value</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Dynamic Row Insertion -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4. STANDARD REPORTS TAB -->
+                <section class="tab-pane" id="tab-reports">
+                    <div class="reports-layout">
+                        <div class="reports-nav" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1px;">
+                            <div style="display: flex; gap: 12px;">
+                                <button class="rep-tab-btn active" data-rep="rep-sales">Sales Revenue Statement</button>
+                                <button class="rep-tab-btn" data-rep="rep-tb">Trial Balance Ledger</button>
+                                <button class="rep-tab-btn" data-rep="rep-prod">Production Output Analysis</button>
+                            </div>
+                            <button class="btn btn-primary btn-sm" id="btn-export-cube" style="padding: 6px 14px; margin-bottom: 6px;">
+                                <svg viewBox="0 0 24 24" width="14" height="14" style="margin-right: 4px; vertical-align: middle;"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z" fill="currentColor"/></svg>
+                                <span>Export Data Cube</span>
+                            </button>
+                        </div>
+
+                        <!-- Sales Revenue Statement -->
+                        <div class="report-document active" id="rep-sales">
+                            <div class="doc-header">
+                                <h2>Solaris Nexus Inc.</h2>
+                                <h3>Sales Revenue & Performance Report</h3>
+                                <p class="doc-meta">Period: Current Month | Generated: Real-time</p>
+                            </div>
+                            <hr class="doc-divider">
+                            <div class="doc-body">
+                                <div class="doc-summary-stats">
+                                    <div class="stat-box">
+                                        <label>Gross Sales Revenue</label>
+                                        <p id="rep-s-total-rev">$0.00</p>
+                                    </div>
+                                    <div class="stat-box">
+                                        <label>Average Deal Size</label>
+                                        <p id="rep-s-avg-size">$0.00</p>
+                                    </div>
+                                    <div class="stat-box">
+                                        <label>Conversion Count</label>
+                                        <p id="rep-s-won-count">0 Won Deals</p>
+                                    </div>
+                                </div>
+                                
+                                <h4>Sales Contribution Breakdown</h4>
+                                <div class="reports-row">
+                                    <div class="reports-col">
+                                        <h5>Regional Revenue Distribution</h5>
+                                        <table class="report-table" id="rep-table-sales-region">
+                                            <thead>
+                                                <tr>
+                                                    <th>Sales Region</th>
+                                                    <th>Total Revenue</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                    <div class="reports-col">
+                                        <h5>Product Segment Performance</h5>
+                                        <table class="report-table" id="rep-table-sales-product">
+                                            <thead>
+                                                <tr>
+                                                    <th>Product Package</th>
+                                                    <th>Total Revenue</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Trial Balance Statement -->
+                        <div class="report-document" id="rep-tb">
+                            <div class="doc-header">
+                                <h2>Solaris Nexus Inc.</h2>
+                                <h3>Trial Balance Statement</h3>
+                                <p class="doc-meta">Period: As of Ingestion | Generated: Real-time</p>
+                            </div>
+                            <hr class="doc-divider">
+                            <div class="doc-body">
+                                <div class="doc-alert-tb text-center" id="rep-tb-status-banner">
+                                    Trial Balance Status: Checking Ledger...
+                                </div>
+
+                                <table class="report-table tb-table" id="rep-table-tb">
+                                    <thead>
+                                        <tr>
+                                            <th>General Ledger Account</th>
+                                            <th class="text-right">Debits ($)</th>
+                                            <th class="text-right">Credits ($)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                    <tfoot>
+                                        <tr class="total-row">
+                                            <td>Total Accounts Balance</td>
+                                            <td class="text-right" id="rep-tb-total-debit">$0.00</td>
+                                            <td class="text-right" id="rep-tb-total-credit">$0.00</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                                <div class="ledger-check-summary" id="rep-tb-diff-summary">
+                                    Ledger Discrepancy: $0.00
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Production Output Statement -->
+                        <div class="report-document" id="rep-prod">
+                            <div class="doc-header">
+                                <h2>Solaris Nexus Inc.</h2>
+                                <h3>Factory Floor Production & Defect Analysis</h3>
+                                <p class="doc-meta">Period: Current Month | Generated: Real-time</p>
+                            </div>
+                            <hr class="doc-divider">
+                            <div class="doc-body">
+                                <div class="doc-summary-stats">
+                                    <div class="stat-box">
+                                        <label>Gross Assembly Yield</label>
+                                        <p id="rep-p-yield">0 Units</p>
+                                    </div>
+                                    <div class="stat-box">
+                                        <label>Defects Logged</label>
+                                        <p id="rep-p-defects">0 Units</p>
+                                    </div>
+                                    <div class="stat-box">
+                                        <label>Plant Defect Rate</label>
+                                        <p id="rep-p-defect-rate">0.00%</p>
+                                    </div>
+                                </div>
+                                
+                                <h4>Machine Performance & Quality Analysis</h4>
+                                <table class="report-table" id="rep-table-prod">
+                                    <thead>
+                                        <tr>
+                                            <th>Machine Identifier</th>
+                                            <th>Units Assembled</th>
+                                            <th>Defect Count</th>
+                                            <th>Defect Rate (%)</th>
+                                            <th>Average Efficiency (%)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+        <!-- AI Assistant Sidebar -->
+        <div class="ai-assistant-drawer shadow" id="ai-assistant-drawer">
+            <div class="ai-header" id="ai-header-bar">
+                <div class="ai-avatar">🤖</div>
+                <div class="ai-title">
+                    <h4>Aura AI Assistant</h4>
+                    <span>Self-Teaching Copilot</span>
+                </div>
+                <button class="btn-close" id="btn-toggle-chat">─</button>
+            </div>
+            
+            <div class="ai-chat-body" id="chat-messages-container">
+                <div class="chat-msg system">
+                    <p>Welcome to **AuraBI**! I'm your interactive AI copilot. I analyze data from **Solaris Nexus Inc.** and guide you in writing formulas, syncing datasets, and correcting data faults. Select a quick query below or write your own!</p>
+                </div>
+            </div>
+            
+            <div class="ai-suggestions" id="chat-suggestions">
+                <button class="sug-btn" data-query="Explain active data anomalies">Explain anomalies</button>
+                <button class="sug-btn" data-query="Is Solaris's Trial Balance balanced?">Check Trial Balance</button>
+                <button class="sug-btn" data-query="Give me a sales revenue summary">Analyze Sales</button>
+                <button class="sug-btn" data-query="What roles exist in AuraBI security?">Verify Roles</button>
+            </div>
+            
+            <div class="ai-chat-footer">
+                <input type="text" id="chat-input" placeholder="Ask Aura AI about reports or QA..." autocomplete="off">
+                <button id="chat-send-btn">
+                    <svg viewBox="0 0 24 24" width="18" height="18"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="currentColor"/></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Float toggle button when chat is minimized -->
+        <button class="ai-float-toggle" id="ai-float-toggle" style="display:none;">
+            🤖 AI Assistant
+        </button>
+    </div>
+    
+    <script src="/static/script.js"></script>
+</body>
+</html>
